@@ -130,9 +130,17 @@ module.exports = (function () {
      */
     function injectHTML(file) {
         if (file.contents) {
-            file.contents = new Buffer(html.prettyPrint(getHTML(file.contents.toString())));
+            let content = file.contents.toString();
+            content = content.replace(/\r?\n|\r/g, ' ');
+            content = content.replace(new RegExp(`<${options.tagName}`, 'g'), `\n<${options.tagName}`);
+            content = content.replace(new RegExp(`${options.tagName}>`, 'g'), `${options.tagName}>\n`);
+            file.contents = new Buffer(html.prettyPrint(getHTML(content)));
         } else {
-            file = new Buffer(html.prettyPrint(getHTML(file.toString())))
+            let content = file.toString();
+            content = content.replace(/\r?\n|\r/g, ' ');
+            content = content.replace(new RegExp(`<${options.tagName}`, 'g'), `\n<${options.tagName}`);
+            content = content.replace(new RegExp(`${options.tagName}>`, 'g'), `${options.tagName}>\n`);
+            file = new Buffer(html.prettyPrint(getHTML(content)))
         }
 
         return file;
