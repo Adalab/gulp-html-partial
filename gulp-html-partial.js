@@ -62,6 +62,14 @@ module.exports = (function () {
             const match = regexp.exec(tag);
 
             if (match) {
+
+                // Fixed: when value length is 1, regex add double quote before value
+                // When: <partial src="..." foo="1"></partial> >>> match[2] === '"1';
+                // We remove quoute '"1' >>> '1'
+                if (match[2].charAt(0) === '"') {
+                    match[2] = match[2].substr(1);
+                }
+
                 attributes.push({
                     key: match[1],
                     value: match[2]
